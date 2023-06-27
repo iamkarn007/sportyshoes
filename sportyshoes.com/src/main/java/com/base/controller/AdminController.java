@@ -47,7 +47,7 @@ public class AdminController {
 	}
 	
 	@DeleteMapping("/deletecategory/{id}")
-	public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") int id) {
+	public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("idd") int id) {
 		try {
 			categoryrepo.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.OK);
