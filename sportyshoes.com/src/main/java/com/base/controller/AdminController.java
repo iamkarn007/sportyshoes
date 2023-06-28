@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.base.model.Category;
 import com.base.model.Product;
+import com.base.model.ProductDTO;
 import com.base.repo.CategoryRepo;
 import com.base.repo.ProductRepo;
 import com.base.service.CategoryService;
@@ -58,10 +59,15 @@ public class AdminController {
 	}
 
 	@PostMapping("/addproduct")
-	public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+	public ResponseEntity<Product> addProduct(@RequestBody ProductDTO productdto) {
 		try {
-			Product product1 = productrepo.save(new Product(product.getPid(), product.getPname(),product.getCategory(),product.getPrice()));
-			return new ResponseEntity<>(product1, HttpStatus.CREATED);
+			Product product = new Product();
+			product.setPid(productdto.getPid());
+			product.setPname(productdto.getPname());
+			product.setPrice(productdto.getPrice());
+			product.setCategory(categoryrepo.findById(productdto.getCatId()).get());
+			productrepo.save(product);
+			return new ResponseEntity<>(product, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
