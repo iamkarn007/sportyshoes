@@ -25,6 +25,7 @@ import com.base.repo.AdminRepo;
 import com.base.repo.CategoryRepo;
 import com.base.repo.ProductRepo;
 import com.base.repo.TransactionRepo;
+import com.base.repo.UserRepo;
 import com.base.service.CategoryService;
 import com.base.model.Transaction;
 
@@ -46,6 +47,9 @@ public class AdminController {
 	
 	@Autowired
 	AdminRepo adminrepo;
+	
+	@Autowired
+	UserRepo userrepo;
 	
 	@GetMapping("/category")
 	public String getCategory() {
@@ -136,4 +140,39 @@ public class AdminController {
 		
 		
 	}
+	
+	@PostMapping("/finduser")
+	public String findUser(@RequestBody User user) {
+		Optional<User> user1 = userrepo.findById(user.getUsername());
+		if(user1.isPresent()) {
+			System.out.println("User Found with Username: " + user.getUsername());
+			return "User Found with Username: " + user.getUsername();
+		}
+		else {
+			return "User not Found with Username: " + user.getUsername();
+		}
+		
+		
+	}
+	
+	@GetMapping("/getuser")
+	public String getUser() {
+		List<User> user = userrepo.findAll();
+		return user.toString();
+	}
+	
+	@GetMapping("/getbydate")
+	public List<Transaction> getDetails(@RequestBody Transaction trans){
+		List<Transaction> trans1 = transrepo.findByDate(trans.getDate());
+		return trans1;
+		
+	}
+	
+	@GetMapping("/getbycid")
+	public List<Transaction> getByCid(@RequestBody Transaction trans){
+		List<Transaction> trans1 = transrepo.findByCid(trans.getCid());
+		return trans1;
+	}
+	
+	
 }

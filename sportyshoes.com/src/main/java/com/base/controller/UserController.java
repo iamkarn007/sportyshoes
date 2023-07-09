@@ -34,12 +34,7 @@ public class UserController {
 	
 	@Autowired
 	TransactionRepo transrepo;
-	
-	@GetMapping("/getuser")
-	public String getUser() {
-		List<User> user = userrepo.findAll();
-		return user.toString();
-	}
+
 	
 	@PostMapping("/adduser")
 	public ResponseEntity<User> addUser(@RequestBody User user) {
@@ -88,10 +83,10 @@ public class UserController {
 	
 	
 	
-	@PostMapping("/user/purchase/{username}")
+	@PostMapping("/purchase/{username}")
 	public ResponseEntity<Transaction> purchaseProduct(@PathVariable("username") String username, @RequestBody Transaction transaction){
 		try {
-			Transaction trans = transrepo.save(new Transaction(username, transaction.getDate(), transaction.getPid()));
+			Transaction trans = transrepo.save(new Transaction(transaction.getTransId(),username, transaction.getDate(), transaction.getPid(), transaction.getCid()));
 			return new ResponseEntity<>(trans, HttpStatus.CREATED);
 		} catch(Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
