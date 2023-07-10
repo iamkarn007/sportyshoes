@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.base.model.Admin;
 import com.base.model.Product;
 import com.base.model.Transaction;
 import com.base.model.User;
@@ -36,7 +37,7 @@ public class UserController {
 	TransactionRepo transrepo;
 
 	
-	@PostMapping("/adduser")
+	@PostMapping("/addUser")
 	public ResponseEntity<User> addUser(@RequestBody User user) {
 		try {
 			User user1 = userrepo.save(new User(user.getUsername(), user.getPassword(),user.getPurchasehistory()));
@@ -46,7 +47,7 @@ public class UserController {
 		}
 	}
 	
-	@DeleteMapping("/deleteuser/{username}")
+	@DeleteMapping("/deleteUser/{username}")
 	public ResponseEntity<HttpStatus> deleteUser(@PathVariable("username") String username) {
 		try {
 			userrepo.deleteById(username);
@@ -57,32 +58,7 @@ public class UserController {
 		}
 	}
 	
-//	@PostMapping("/purchase/{pid}")
-//	public ResponseEntity<User> purchaseTable(@PathVariable("pid") int pid, @RequestBody User user){
-//		StringBuilder PurchaseData = new StringBuilder();
-//		Optional<Product> prod=productrepo.findById(pid);
-//		String password = userrepo.findById(null)
-//		PurchaseData.append(prod.get().getPid());
-//		PurchaseData.append("*");
-//		PurchaseData.append(prod.get().getPname());
-//		PurchaseData.append("*");
-//		PurchaseData.append(prod.get().getPrice());
-//		PurchaseData.append("*");
-//		PurchaseData.append(prod.get().getCategory());
-//		PurchaseData.append(";");
-//		System.out.println(productrepo.findById(pid));
-//		
-//		try {
-//			User user1 = userrepo.save(new User(user.getUsername(), user.getPassword(),PurchaseData.toString()));
-//			return new ResponseEntity<>(user1, HttpStatus.CREATED);
-//		} catch (Exception e) {
-//			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
-	
-	
-	
-	
+
 	@PostMapping("/purchase/{username}")
 	public ResponseEntity<Transaction> purchaseProduct(@PathVariable("username") String username, @RequestBody Transaction transaction){
 		try {
@@ -90,6 +66,26 @@ public class UserController {
 			return new ResponseEntity<>(trans, HttpStatus.CREATED);
 		} catch(Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@PostMapping("/login")
+	public String loginAccess(@RequestBody User user) {
+		Optional<User> user1= userrepo.findById(user.getUsername());
+		if(!user1.isPresent()) {
+			System.out.println("Not Present");
+			return "No User with that Username is Present";
+		}
+		else {
+			if(!user1.get().getPassword().equals(user.getPassword())) {
+				System.out.println("Table Details "+user1.get().getPassword());
+				System.out.println("Entered Details "+user.getPassword());
+				return "Invalid Credential";
+			}
+			else {
+				return "Successfully Logged in";
+			}
 		}
 	}
 }

@@ -51,13 +51,13 @@ public class AdminController {
 	@Autowired
 	UserRepo userrepo;
 	
-	@GetMapping("/category")
+	@GetMapping("/getAllCategory")
 	public String getCategory() {
 		return categoryservice.getAllCategory().toString();
 		
 	}
 	
-	@PostMapping("/addcategory")
+	@PostMapping("/addCategory")
 	public ResponseEntity<Category> addCategory(@RequestBody Category category) {
 		try {
 			Category category1 = categoryrepo.save(new Category(category.getCid(), category.getCname()));
@@ -67,8 +67,8 @@ public class AdminController {
 		}
 	}
 	
-	@DeleteMapping("/deletecategory/{id}")
-	public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("idd") int id) {
+	@DeleteMapping("/deleteCategory/{id}")
+	public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") int id) {
 		try {
 			categoryrepo.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -78,7 +78,7 @@ public class AdminController {
 		}
 	}
 
-	@PostMapping("/addproduct")
+	@PostMapping("/addProduct")
 	public ResponseEntity<Product> addProduct(@RequestBody ProductDTO productdto) {
 		try {
 			Product product = new Product();
@@ -87,13 +87,15 @@ public class AdminController {
 			product.setPrice(productdto.getPrice());
 			product.setCategory(categoryrepo.findById(productdto.getCatId()).get());
 			productrepo.save(product);
+			System.out.println(product);
 			return new ResponseEntity<>(product, HttpStatus.CREATED);
 		} catch (Exception e) {
+			System.out.println(e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
-	@DeleteMapping("/deleteproduct/{id}")
+	@DeleteMapping("/deleteProduct/{id}")
 	public ResponseEntity<HttpStatus> deleteProduct(@PathVariable("id") int id) {
 		try {
 			productrepo.deleteById(id);
@@ -104,13 +106,13 @@ public class AdminController {
 		}
 	}
 	
-	@GetMapping("/gettransaction")
+	@GetMapping("/getAllTransaction")
 	public List<Transaction> getTransaction() {
 		List<Transaction> trans = transrepo.findAll();
 		return trans;
 	}   
 	
-	@PostMapping("/changepassword")
+	@PostMapping("/changePassword")
 	ResponseEntity<Admin> changePassword(@RequestBody Admin admin){
 		try {
 			Admin admin1 = adminrepo.save(new Admin(admin.getUsername(), admin.getPassword()));
@@ -137,11 +139,9 @@ public class AdminController {
 				return "Successfully Logged in";
 			}
 		}
-		
-		
 	}
 	
-	@PostMapping("/finduser")
+	@PostMapping("/findUser")
 	public String findUser(@RequestBody User user) {
 		Optional<User> user1 = userrepo.findById(user.getUsername());
 		if(user1.isPresent()) {
@@ -151,24 +151,21 @@ public class AdminController {
 		else {
 			return "User not Found with Username: " + user.getUsername();
 		}
-		
-		
 	}
 	
-	@GetMapping("/getuser")
+	@GetMapping("/getAllUser")
 	public String getUser() {
 		List<User> user = userrepo.findAll();
 		return user.toString();
 	}
 	
-	@GetMapping("/getbydate")
+	@GetMapping("/transaction/getByDate")
 	public List<Transaction> getDetails(@RequestBody Transaction trans){
 		List<Transaction> trans1 = transrepo.findByDate(trans.getDate());
 		return trans1;
-		
 	}
 	
-	@GetMapping("/getbycid")
+	@GetMapping("/transaction/getByCid")
 	public List<Transaction> getByCid(@RequestBody Transaction trans){
 		List<Transaction> trans1 = transrepo.findByCid(trans.getCid());
 		return trans1;
